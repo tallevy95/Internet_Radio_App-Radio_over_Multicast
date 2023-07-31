@@ -1,4 +1,5 @@
 Simple internet radio which implemented with simple connection protocol and multicast transmission.
+The app uses TCP and UDP.
 
 1. To play music you need to have mp3 files in app directory.
 2. App was made for Linux OS.
