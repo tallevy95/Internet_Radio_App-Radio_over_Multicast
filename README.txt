@@ -24,7 +24,8 @@ Server:
 Rate Control:
 
   To ensure smooth music streaming, both the client and server implement rate control. The server streams music to clients at 
-  a constant rate of 1KiB every 62500 usec. On the client side, music upload to the server occurs at a rate of 1KiB every 8000 usec.
+  a constant rate of 1KiB every 62500 usec. On the client side, music upload to the server occurs at a rate of 1KiB every 
+  8000 usec.
 
 Instructions:
 
@@ -53,5 +54,6 @@ Note:
     multicast topology (GNS3) and virtual box machines (pc1, ..., pc4).
   - The server supports up to 100 clients simultaneously.
   - The server prints replies and commands to stdout for monitoring purposes.
-  - Proper error handling is implemented to gracefully terminate connections in case of invalid commands or misbehaving clients.
+  - Proper error handling is implemented to gracefully terminate connections in case of invalid commands or misbehaving
+    clients.
 
