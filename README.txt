@@ -1,53 +1,47 @@
-Simple internet radio which implemented with simple connection protocol and multicast transmission.
-The app uses TCP and UDP.
+Internet Radio Application
 
-1. To play music you need to have mp3 files in app directory.
-2. App was made for Linux OS.
-3. The app was made for GNS3.
-4. FSM of client/server and Makefile are in repository too.
+Description:
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+This project implements an Internet Radio application that allows clients to connect to a server and listen to music from different stations. Clients can request songs, change stations, and even upload new songs to the server to be added to the playlist. The server can handle multiple clients simultaneously, and the music streaming is done at a constant bit rate to ensure smooth playback.
+This project was an assignment as part of the course "Computer Networks Design Laboratory"
 
-Protocol use the following messages:
+Client Control:
 
-#Client to Server:
-  Hello:
-    uint8_t commandType = 0;
-    uint16_t reserved = 0;
-    uint8_t hello_pckt[3];
-    uint8_t commandType;
+The "Client Control" program (radio_control) handles the interaction with the server and user. It connects to the server using TCP and communicates according to the Server-Client protocol. The client can request songs by entering station numbers, change stations, and upload new songs. The program uses UDP to receive music data and utilizes the "play" program to play the songs in real-time.
 
-  AskSong:
-    uint8_t commandType = 1;
-    uint16_t stationNumber;
+Server:
 
-  UpSong:
-    uint8_t commandType = 2;
-    uint32_t songSize; //in bytes
-    uint8_t songNameSize;
-    char songName[songNameSize];
+The server program (radio_server) listens for client connections on a specified TCP port. It supports multiple clients and maintains a simple database of stations and connected clients. Each station plays a single song, and the server loops the songs indefinitely. Clients can upload new songs, and the server dynamically adds them to the playlist.
 
-#Server to Client:
-  Welcome:
-    uint8_t replyType = 0;
-    uint16_t numStations;
-    uint32_t multicastGroup;
-    uint16_t portNumber;
+Rate Control:
 
-  Announce:
-    uint8_t replyType = 1;
-    uint8_t songNameSize;
-    char songName[songNameSize];
+To ensure smooth music streaming, both the client and server implement rate control. The server streams music to clients at a constant rate of 1KiB every 62500 usec. On the client side, music upload to the server occurs at a rate of 1KiB every 8000 usec.
 
-  PermitSong:
-    uint8_t replyType = 2;
-    uint8_t permit;
+Instructions:
 
-  InvalidCommand:
-    uint8_t replyType = 3;
-    uint8_t replyStringSize;
-    char replyString[replyStringSize];
+To run the application, follow these steps:
 
-  NewStations:
-    uint8_t replyType = 4;
-    uint16_t newStationNumber
+1. Compile the server program: gcc -o radio_server radio_server.c -lpthread
+2. Compile the client control program: gcc -o radio_control radio_control.c
+3. Run the server: ./radio_server <tcpport> <mulitcastip> <udpport> <file1> <file2> ...
+  <tcpport>: Port number for TCP connections.
+  <mulitcastip>: IP address for multicast group station 0.
+  <udpport>: Port number for UDP music streaming.
+  <file1> <file2> ...: List of music files to be played by each station.
+4. Run the client control: ./radio_control <servername> <serverport>
+  <servername>: IP address or hostname of the server.
+  <serverport>: Port number of the server.
+
+Commands:
+
+- Type a station number and press Enter to request a song from that station.
+- Type 's' and press Enter to upload a new song to the server.
+- Type 'q' and press Enter to quit the client program.
+
+Note:
+
+- The server and client programs use Berkeley sockets API and are designed to work on laboratory computers with the specified multicast topology (GNS3) and virtual box machines (pc1, ..., pc4).
+- The server supports up to 100 clients simultaneously.
+- The server prints replies and commands to stdout for monitoring purposes.
+- Proper error handling is implemented to gracefully terminate connections in case of invalid commands or misbehaving clients.
+
